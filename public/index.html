@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Acme Bank — Transfers</title>
+<title>Careotter — Patient Records</title>
 <style>
   :root {
-    --purple: #5f259f;
-    --purple-dark: #46187a;
-    --purple-bright: #a879e0;
-    --bg: #f3f3f3;
+    --teal: #0e7c7b;
+    --teal-dark: #085e5d;
+    --teal-bright: #4fc3c0;
+    --bg: #f4f7f7;
     --white: #fff;
     --gray-200: #e0e0e0;
     --gray-600: #616161;
@@ -21,13 +21,13 @@
 
   .topbar { background: var(--white); border-bottom: 1px solid var(--gray-200); }
   .topbar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; padding: 0.7rem 1rem; }
-  .logo { background: var(--purple); color: #fff; font-weight: 800; font-size: 1.25rem; padding: 0.35rem 0.7rem; border-radius: 3px; letter-spacing: 0.5px; }
+  .logo { background: var(--teal); color: #fff; font-weight: 800; font-size: 1.1rem; padding: 0.35rem 0.7rem; border-radius: 6px; letter-spacing: 0.5px; }
   .topnav { display: flex; gap: 1.5rem; font-weight: 600; color: var(--text); flex: 1; }
   .topnav a { color: inherit; text-decoration: none; }
-  .topnav a.active { color: var(--purple); }
+  .topnav a.active { color: var(--teal); }
   .top-actions { display: flex; gap: 1.25rem; align-items: center; color: var(--gray-600); font-weight: 600; }
 
-  .hero { background: var(--purple); color: #fff; padding: 1.4rem 0 1.6rem; }
+  .hero { background: var(--teal); color: #fff; padding: 1.4rem 0 1.6rem; }
   .hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
   .hero h1 { font-size: 1.6rem; font-weight: 500; margin-bottom: 0.9rem; }
   .quick-actions { display: flex; gap: 0.6rem; }
@@ -38,7 +38,7 @@
 
   .sidebar { font-size: 0.88rem; }
   .sidebar .side-title { font-weight: 700; margin-bottom: 0.8rem; }
-  .sidebar a { display: block; color: var(--purple); text-decoration: none; padding: 0.42rem 0.5rem; border-radius: 4px; }
+  .sidebar a { display: block; color: var(--teal); text-decoration: none; padding: 0.42rem 0.5rem; border-radius: 4px; }
   .sidebar a.active { background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-weight: 700; }
 
   .panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -46,46 +46,45 @@
   .panel-head h2 { font-size: 1.25rem; font-weight: 600; }
   .section-row { display: flex; justify-content: space-between; padding: 0.8rem 1.25rem; background: #fafafa; font-weight: 700; border-top: 1px solid var(--gray-200); }
   .acct-row { display: flex; justify-content: space-between; padding: 0.75rem 1.25rem 0.75rem 1.6rem; border-top: 1px solid #eee; }
-  .acct-row .name { color: var(--purple); font-weight: 700; }
+  .acct-row .name { color: var(--teal); font-weight: 700; }
   .acct-row .num { color: var(--gray-600); font-weight: 400; margin-left: 0.5rem; font-size: 0.82rem; }
 
   .transfer-card { margin-top: 1.5rem; padding: 1.5rem 1.25rem; }
-  .transfer-card h2 { font-size: 1.15rem; font-weight: 700; color: var(--purple-dark); margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--purple-bright); display: inline-block; }
+  .transfer-card h2 { font-size: 1.15rem; font-weight: 700; color: var(--teal-dark); margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--teal-bright); display: inline-block; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
   .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
   .form-group label { font-size: 0.8rem; font-weight: 700; color: var(--gray-600); }
   .form-group select, .form-group input { padding: 0.55rem 0.6rem; border: 1px solid #bdbdbd; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
-  .btn-transfer { width: 100%; padding: 0.85rem; background: var(--purple); color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
-  .btn-transfer:hover { background: var(--purple-dark); }
+  .btn-transfer { width: 100%; padding: 0.85rem; background: var(--teal); color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+  .btn-transfer:hover { background: var(--teal-dark); }
   .btn-transfer:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .result { margin-top: 1rem; padding: 0.9rem 1rem; border-radius: 4px; font-size: 0.88rem; display: none; }
   .result.error { display: block; background: #fdecea; border: 1px solid #f5c6c3; color: var(--red); }
-  .result.success { display: block; background: #edf7ed; border: 1px solid #c8e6c9; color: var(--purple-dark); }
-  .result a { color: inherit; font-weight: 700; }
+  .result.success { display: block; background: #e6f4f4; border: 1px solid #b8dedd; color: var(--teal-dark); }
 </style>
 </head>
 <body>
   <div class="topbar">
     <div class="topbar-inner">
-      <div class="logo">A</div>
+      <div class="logo">careotter</div>
       <nav class="topnav">
-        <a href="#" class="active">My Accounts</a>
-        <a href="#">Products</a>
-        <a href="#">Ways to Bank</a>
-        <a href="#">Learn</a>
+        <a href="#" class="active">Patients</a>
+        <a href="#">Schedule</a>
+        <a href="#">Billing</a>
+        <a href="#">Reports</a>
       </nav>
-      <div class="top-actions"><span>&#128269;</span><span>&#128100;</span><span>Logout</span></div>
+      <div class="top-actions"><span>&#128269;</span><span>&#128100;</span><span>Front Desk &middot; Logout</span></div>
     </div>
   </div>
 
   <div class="hero">
     <div class="hero-inner">
-      <h1>Good Morning</h1>
+      <h1>Good Morning, Riverbend Family Practice</h1>
       <div class="quick-actions">
-        <button class="chip">Pay Bills</button>
-        <button class="chip">Make a Transfer</button>
-        <button class="chip">Interac e-Transfer&reg;</button>
+        <button class="chip">New Patient</button>
+        <button class="chip">Schedule Appointment</button>
+        <button class="chip">Check In</button>
         <button class="chip">+</button>
       </div>
     </div>
@@ -93,62 +92,64 @@
 
   <div class="layout">
     <aside class="sidebar">
-      <div class="side-title">My Accounts</div>
-      <a href="#">Pay Bills</a>
-      <a href="#" class="active">Transfers</a>
-      <a href="#">Interac e-Transfer&reg;</a>
-      <a href="#">Acme Global Transfer</a>
-      <a href="#">My Acme Rewards</a>
-      <a href="#">Investments</a>
-      <a href="#">My Profile &amp; Settings</a>
+      <div class="side-title">Practice</div>
+      <a href="#">Patients</a>
+      <a href="#" class="active">Appointments</a>
+      <a href="#">Records</a>
+      <a href="#">Referrals</a>
+      <a href="#">Billing &amp; Claims</a>
+      <a href="#">Messages</a>
+      <a href="#">Settings</a>
     </aside>
 
     <main>
       <div class="panel">
         <div class="panel-head">
-          <h2>My Accounts</h2>
-          <div style="font-weight:600;color:var(--purple)">Personal &nbsp;|&nbsp; Business</div>
+          <h2>Today's Patients</h2>
+          <div style="font-weight:600;color:var(--teal)">Riverbend Family Practice</div>
         </div>
-        <div class="section-row"><span>Banking</span><span>$6,222.09</span></div>
-        <div class="acct-row"><span><span class="name">ACME UNLIMITED CHEQUING ACCOUNT</span><span class="num">1 116129</span></span><span>$3,389.05</span></div>
-        <div class="acct-row"><span><span class="name">ACME HIGH INTEREST SAVINGS ACCOUNT</span><span class="num">9400 6549743</span></span><span>$2,833.04</span></div>
-        <div class="section-row"><span>Investments</span><span>$88,000.00</span></div>
-        <div class="acct-row"><span><span class="name">MUTUAL FUND TFSA</span><span class="num">1996 0008649</span></span><span>$76,000.00</span></div>
-        <div class="acct-row"><span><span class="name">DAILY INTEREST RSP</span><span class="num">1 1155815</span></span><span>$12,000.00</span></div>
+        <div class="section-row"><span>Patient</span><span>Last Visit</span></div>
+        <div class="acct-row"><span><span class="name">Margaret Chen</span><span class="num">MRN 100234 &middot; Dr. Alvarez</span></span><span>Jun 2, 2026</span></div>
+        <div class="acct-row"><span><span class="name">James Whitfield</span><span class="num">MRN 100871 &middot; Dr. Okafor</span></span><span>May 19, 2026</span></div>
+        <div class="acct-row"><span><span class="name">Sofia Ramirez</span><span class="num">MRN 101440 &middot; Dr. Alvarez</span></span><span>Jul 1, 2026</span></div>
+        <div class="acct-row"><span><span class="name">Harold Nguyen</span><span class="num">MRN 102055 &middot; Dr. Patel</span></span><span>Jun 24, 2026</span></div>
       </div>
 
       <div class="panel transfer-card">
-        <h2>Transfer Money</h2>
-        <form id="transferForm">
+        <h2>Schedule Appointment</h2>
+        <form id="apptForm">
           <div class="form-grid">
             <div class="form-group">
-              <label>From Account</label>
-              <select id="fromAccount">
-                <option value="ACME-CHK-116129">ACME UNLIMITED CHEQUING — $3,389.05</option>
-                <option value="ACME-SAV-6549743">ACME HIGH INTEREST SAVINGS — $2,833.04</option>
+              <label>Patient</label>
+              <select id="patientId">
+                <option value="PT-100234">Margaret Chen — MRN 100234</option>
+                <option value="PT-100871">James Whitfield — MRN 100871</option>
+                <option value="PT-101440">Sofia Ramirez — MRN 101440</option>
+                <option value="PT-102055">Harold Nguyen — MRN 102055</option>
               </select>
             </div>
             <div class="form-group">
-              <label>To Account</label>
-              <select id="toAccount">
-                <option value="ACME-SAV-6549743">ACME HIGH INTEREST SAVINGS — $2,833.04</option>
-                <option value="ACME-CHK-116129">ACME UNLIMITED CHEQUING — $3,389.05</option>
+              <label>Provider</label>
+              <select id="providerId">
+                <option value="DR-01">Dr. Alvarez — Family Medicine</option>
+                <option value="DR-02">Dr. Okafor — Internal Medicine</option>
+                <option value="DR-03">Dr. Patel — Cardiology</option>
               </select>
             </div>
             <div class="form-group">
-              <label>Amount (USD)</label>
-              <input type="number" id="amount" value="250.00" min="0.01" step="0.01">
+              <label>Date</label>
+              <input type="date" id="date" value="2026-08-01">
             </div>
             <div class="form-group">
-              <label>Transfer Type</label>
-              <select id="transferType">
-                <option value="instant">Instant Transfer</option>
-                <option value="standard">Standard (1-3 days)</option>
-                <option value="wire">Domestic Wire ($15.00 fee)</option>
+              <label>Visit Type</label>
+              <select id="visitType">
+                <option value="office-visit">Office Visit (30 min)</option>
+                <option value="annual-physical">Annual Physical (60 min)</option>
+                <option value="specialist">Specialist Consult (45 min)</option>
               </select>
             </div>
           </div>
-          <button type="submit" class="btn-transfer" id="submitBtn">Transfer Money</button>
+          <button type="submit" class="btn-transfer" id="submitBtn">Schedule Appointment</button>
         </form>
         <div class="result" id="result"></div>
       </div>
@@ -156,40 +157,40 @@
   </div>
 
 <script>
-  const form = document.getElementById('transferForm');
+  const form = document.getElementById('apptForm');
   const btn = document.getElementById('submitBtn');
   const result = document.getElementById('result');
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     btn.disabled = true;
-    btn.textContent = 'Processing…';
+    btn.textContent = 'Scheduling…';
     result.className = 'result';
     try {
-      const res = await fetch('/api/transfer', {
+      const res = await fetch('/api/appointments', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fromAccount: document.getElementById('fromAccount').value,
-          toAccount: document.getElementById('toAccount').value,
-          amount: parseFloat(document.getElementById('amount').value),
-          transferType: document.getElementById('transferType').value,
+          patientId: document.getElementById('patientId').value,
+          providerId: document.getElementById('providerId').value,
+          date: document.getElementById('date').value,
+          visitType: document.getElementById('visitType').value,
         }),
       });
       const data = await res.json();
       if (data.success) {
         result.className = 'result success';
-        result.textContent = 'Transfer complete. Confirmation ' + data.confirmationId;
+        result.textContent = 'Appointment scheduled. Confirmation ' + data.confirmationId;
       } else {
         result.className = 'result error';
-        result.innerHTML = '<strong>Transfer failed.</strong> ' + (data.errorClass || 'Error') + ': ' + data.error;
+        result.innerHTML = '<strong>Scheduling failed.</strong> ' + (data.errorClass || 'Error') + ': ' + data.error;
       }
     } catch (err) {
       result.className = 'result error';
-      result.textContent = 'Transfer failed. ' + err.message;
+      result.textContent = 'Scheduling failed. ' + err.message;
     } finally {
       btn.disabled = false;
-      btn.textContent = 'Transfer Money';
+      btn.textContent = 'Schedule Appointment';
     }
   });
 </script>
