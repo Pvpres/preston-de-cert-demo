@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Careotter Sentinel — Error Monitoring</title>
+<style>
+  :root {
+    --bg: #16111f;
+    --bg-2: #1e1730;
+    --panel: #241b39;
+    --panel-2: #2c2145;
+    --border: #372a52;
+    --text: #e9e4f5;
+    --muted: #9d92b8;
+    --purple: #7b4fd4;
+    --purple-bright: #a879e0;
+    --red: #ff5c6c;
+    --red-bg: #3a1622;
+    --amber: #ffb454;
+    --green: #4fd48a;
+    --blue: #4f9bd4;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+  a { color: var(--purple-bright); }
+
+  .app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
+
+  /* Sidebar */
+  .rail { background: var(--bg-2); border-right: 1px solid var(--border); padding: 1rem 0.75rem; }
+  .brand { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.05rem; padding: 0.4rem 0.5rem 1.1rem; }
+  .brand .dot { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); box-shadow: 0 0 12px rgba(168,121,224,0.6); }
+  .navsec { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 1rem 0.5rem 0.35rem; }
+  .rail a { display: flex; align-items: center; gap: 0.55rem; color: var(--muted); text-decoration: none; padding: 0.45rem 0.5rem; border-radius: 6px; font-weight: 600; }
+  .rail a.active { background: var(--panel-2); color: var(--text); }
+  .rail a:hover { color: var(--text); }
+
+  /* Main */
+  .main { display: flex; flex-direction: column; min-width: 0; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.4rem; border-bottom: 1px solid var(--border); }
+  .topbar h1 { font-size: 1.05rem; font-weight: 700; }
+  .env-pill { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.6rem; }
+
+  .content { display: grid; grid-template-columns: 1.1fr 1.4fr; gap: 0; flex: 1; min-height: 0; }
+
+  /* Issue stream */
+  .stream { border-right: 1px solid var(--border); overflow-y: auto; }
+  .stream-head { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; color: var(--muted); font-size: 0.78rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); }
+  .issue { display: block; width: 100%; text-align: left; background: none; border: none; border-bottom: 1px solid var(--border); padding: 0.85rem 1rem; cursor: pointer; color: var(--text); }
+  .issue:hover { background: var(--bg-2); }
+  .issue.active { background: var(--panel); box-shadow: inset 3px 0 0 var(--purple-bright); }
+  .issue-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
+  .lvl { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.12rem 0.4rem; border-radius: 4px; }
+  .lvl.error { background: var(--red-bg); color: var(--red); }
+  .lvl.warning { background: #3a2f14; color: var(--amber); }
+  .issue-title { font-weight: 700; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .issue-sub { color: var(--muted); font-size: 0.78rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .issue-meta { display: flex; gap: 1.1rem; margin-top: 0.4rem; color: var(--muted); font-size: 0.74rem; }
+  .issue-meta b { color: var(--text); }
+  .resolved .issue-title { color: var(--muted); text-decoration: line-through; }
+
+  /* Detail */
+  .detail { overflow-y: auto; padding: 1.2rem 1.4rem 2.5rem; }
+  .detail h2 { font-size: 1.15rem; font-weight: 800; line-height: 1.4; }
+  .detail .culprit { font-family: ui-monospace, Menlo, monospace; color: var(--muted); margin-top: 0.3rem; font-size: 0.82rem; }
+  .badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.9rem 0 1.2rem; }
+  .badge { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); background: var(--bg-2); border-radius: 6px; padding: 0.28rem 0.55rem; }
+  .badge b { color: var(--text); }
+
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.1rem; overflow: hidden; }
+  .card-h { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+  pre { padding: 0.9rem; font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; line-height: 1.55; color: #ffd7db; white-space: pre-wrap; overflow-x: auto; }
+  .crumbs { padding: 0.4rem 0; }
+  .crumb { display: grid; grid-template-columns: 62px 90px 1fr; gap: 0.6rem; padding: 0.4rem 0.9rem; font-size: 0.8rem; border-top: 1px solid var(--border); }
+  .crumb:first-child { border-top: none; }
+  .crumb .t { color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
+  .crumb .c { color: var(--purple-bright); font-weight: 600; }
+
+  /* Devin auto-remediation */
+  .devin-card { border: 1px solid var(--purple); background: linear-gradient(180deg, rgba(123,79,212,0.14), rgba(36,27,57,0.6)); }
+  .devin-head { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1rem; }
+  .devin-head .lhs { display: flex; align-items: center; gap: 0.6rem; }
+  .devin-logo { width: 26px; height: 26px; border-radius: 7px; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); box-shadow: 0 0 14px rgba(168,121,224,0.7); }
+  .devin-head h3 { font-size: 0.95rem; }
+  .devin-head .sub { color: var(--muted); font-size: 0.76rem; }
+
+  .btn { border: none; border-radius: 8px; padding: 0.6rem 1rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit; }
+  .btn-devin { background: linear-gradient(135deg, var(--purple), var(--purple-bright)); color: #fff; box-shadow: 0 4px 14px rgba(123,79,212,0.45); }
+  .btn-devin:hover { filter: brightness(1.08); }
+  .btn-devin:disabled { opacity: 0.6; cursor: default; box-shadow: none; }
+
+  .auto-note { display: flex; align-items: center; gap: 0.45rem; color: var(--muted); font-size: 0.75rem; padding: 0 1rem 0.6rem; }
+  .toggle { position: relative; width: 30px; height: 17px; border-radius: 999px; background: var(--purple); }
+  .toggle::after { content: ''; position: absolute; top: 2px; right: 2px; width: 13px; height: 13px; border-radius: 50%; background: #fff; }
+
+  /* Timeline */
+  .timeline { display: none; padding: 0.4rem 1rem 1.1rem; }
+  .timeline.show { display: block; }
+  .step { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.5rem 0; }
+  .step .icon { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); flex: none; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--muted); background: var(--bg-2); margin-top: 1px; }
+  .step .body .s-title { font-weight: 700; font-size: 0.85rem; color: var(--muted); }
+  .step .body .s-sub { color: var(--muted); font-size: 0.76rem; margin-top: 0.1rem; }
+  .step.done .icon { border-color: var(--green); color: var(--green); }
+  .step.done .body .s-title { color: var(--text); }
+  .step.active .icon { border-color: var(--purple-bright); color: var(--purple-bright); animation: pulse 1s infinite; }
+  .step.active .body .s-title { color: var(--purple-bright); }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(168,121,224,0.5); } 50% { box-shadow: 0 0 0 6px rgba(168,121,224,0); } }
+  .conn { width: 2px; background: var(--border); margin-left: 10px; height: 10px; }
+  .conn.done { background: var(--green); }
+
+  .session-link { margin-top: 0.7rem; padding: 0.7rem 0.85rem; border: 1px solid var(--purple); border-radius: 8px; background: rgba(123,79,212,0.12); font-size: 0.82rem; display: none; }
+  .session-link.show { display: block; }
+  .session-link a { font-weight: 700; word-break: break-all; }
+
+  .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: spin 0.7s linear infinite; vertical-align: -2px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty { color: var(--muted); padding: 3rem 1.4rem; text-align: center; }
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand"><span class="dot"></span> Sentinel</div>
+    <div class="navsec">Monitoring</div>
+    <a href="#" class="active">&#9888;&#65039; Issues</a>
+    <a href="#">&#128200; Performance</a>
+    <a href="#">&#128737;&#65039; Security</a>
+    <a href="#">&#128276; Alerts</a>
+    <div class="navsec">Automation</div>
+    <a href="#">&#129302; Devin Auto-Remediation</a>
+    <a href="#">&#128279; Integrations</a>
+    <div class="navsec">Careotter</div>
+    <a href="/">&#127973; Patient Portal</a>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <h1>Issues</h1>
+      <span class="env-pill">careotter &middot; production</span>
+    </div>
+    <div class="content">
+      <section class="stream">
+        <div class="stream-head"><span>UNRESOLVED ISSUES</span><span id="issueCount"></span></div>
+        <div id="issueList"></div>
+      </section>
+      <section class="detail" id="detail">
+        <div class="empty">Select an issue to view details.</div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<script>
+  let incidents = [];
+  let activeId = null;
+  const dispatched = {}; // incidentId -> { url, sessionId }
+
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const rel = (iso) => {
+    const diff = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (diff < 60) return Math.floor(diff) + 's ago';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    return Math.floor(diff / 86400) + 'd ago';
+  };
+
+  async function load() {
+    const res = await fetch('/api/incidents');
+    incidents = (await res.json()).incidents;
+    renderList();
+    const firstOpen = incidents.find((i) => i.status !== 'resolved');
+    if (firstOpen) select(firstOpen.id);
+  }
+
+  function renderList() {
+    const open = incidents.filter((i) => i.status !== 'resolved');
+    document.getElementById('issueCount').textContent = open.length + ' open';
+    document.getElementById('issueList').innerHTML = incidents.map((i) => `
+      <button class="issue ${i.id === activeId ? 'active' : ''} ${i.status === 'resolved' ? 'resolved' : ''}" onclick="select('${i.id}')">
+        <div class="issue-top">
+          <span class="lvl ${i.level}">${i.level}</span>
+          <span class="issue-title">${esc(i.title)}</span>
+        </div>
+        <div class="issue-sub">${esc(i.culprit)}</div>
+        <div class="issue-meta">
+          <span><b>${i.events24h.toLocaleString()}</b> events</span>
+          <span><b>${i.users}</b> users</span>
+          <span>${esc(i.service)}</span>
+          <span>${rel(i.lastSeen)}</span>
+        </div>
+      </button>`).join('');
+  }
+
+  function select(id) {
+    activeId = id;
+    renderList();
+    const i = incidents.find((x) => x.id === id);
+    if (!i) return;
+    const d = dispatched[id];
+    document.getElementById('detail').innerHTML = `
+      <h2>${esc(i.title)}</h2>
+      <div class="culprit">${esc(i.culprit)}</div>
+      <div class="badges">
+        <span class="badge">ID <b>${i.id}</b></span>
+        <span class="badge">Service <b>${esc(i.service)}</b></span>
+        <span class="badge">Env <b>${esc(i.environment)}</b></span>
+        <span class="badge">Release <b>${esc(i.release)}</b></span>
+        <span class="badge">Endpoint <b>${esc(i.endpoint)}</b></span>
+        <span class="badge">Events 24h <b>${i.events24h.toLocaleString()}</b></span>
+        <span class="badge">Users <b>${i.users}</b></span>
+        <span class="badge">Last seen <b>${rel(i.lastSeen)}</b></span>
+      </div>
+
+      ${i.remediable ? `
+      <div class="card devin-card">
+        <div class="devin-head">
+          <div class="lhs">
+            <span class="devin-logo"></span>
+            <div>
+              <h3>Devin Auto-Remediation</h3>
+              <div class="sub">Dispatch an autonomous engineer to investigate & fix this issue</div>
+            </div>
+          </div>
+          <button class="btn btn-devin" id="devinBtn" onclick="remediate('${i.id}')">Trigger Devin</button>
+        </div>
+        <div class="auto-note"><span class="toggle"></span> Auto-remediation is ON — Devin dispatches automatically when this alert fires.</div>
+        <div class="timeline" id="timeline">
+          ${step('detect', 'Error detected', 'Sentinel captured ' + i.events24h.toLocaleString() + ' events')}
+          ${conn()}
+          ${step('dispatch', 'Devin dispatched', 'Creating session via Devin API')}
+          ${conn()}
+          ${step('investigate', 'Investigating', 'Devin is analyzing the stack trace & repo')}
+          ${conn()}
+          ${step('pr', 'Fix PR opened', 'Devin submits a pull request for review')}
+          <div class="session-link" id="sessionLink"></div>
+        </div>
+      </div>` : ''}
+
+      <div class="card">
+        <div class="card-h">Stack trace</div>
+        <pre>${esc(i.stacktrace)}</pre>
+      </div>
+      ${i.breadcrumbs && i.breadcrumbs.length ? `
+      <div class="card">
+        <div class="card-h">Breadcrumbs</div>
+        <div class="crumbs">
+          ${i.breadcrumbs.map((b) => `<div class="crumb"><span class="t">${esc(b.time)}</span><span class="c">${esc(b.category)}</span><span>${esc(b.message)}</span></div>`).join('')}
+        </div>
+      </div>` : ''}
+    `;
+    if (d) restoreDispatched(id);
+  }
+
+  function step(key, title, sub) {
+    return `<div class="step" id="st-${key}"><div class="icon">&#9679;</div><div class="body"><div class="s-title">${title}</div><div class="s-sub">${sub}</div></div></div>`;
+  }
+  function conn() { return '<div class="conn" id="conn"></div>'; }
+
+  function setStep(key, state) {
+    const el = document.getElementById('st-' + key);
+    if (el) el.className = 'step ' + state;
+  }
+
+  async function remediate(id) {
+    const btn = document.getElementById('devinBtn');
+    const tl = document.getElementById('timeline');
+    tl.classList.add('show');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Dispatching…';
+
+    setStep('detect', 'done');
+    setStep('dispatch', 'active');
+
+    try {
+      const res = await fetch('/api/incidents/' + id + '/remediate', { method: 'POST' });
+      const data = await res.json();
+
+      if (!data.dispatched || !data.devinSession) {
+        setStep('dispatch', 'active');
+        document.getElementById('devinBtn').innerHTML = 'Retry';
+        document.getElementById('devinBtn').disabled = false;
+        showSession(null, 'DEVIN_API_KEY not configured on the server — session was not created. Set it in .env and retry.');
+        return;
+      }
+
+      dispatched[id] = data.devinSession;
+      setStep('dispatch', 'done');
+      document.querySelectorAll('.conn')[0] && (document.querySelectorAll('.conn')[0].className = 'conn done');
+      setStep('investigate', 'active');
+      btn.innerHTML = '&#129302; Devin working…';
+
+      setTimeout(() => {
+        setStep('investigate', 'done');
+        setStep('pr', 'active');
+        showSession(data.devinSession, null);
+      }, 2600);
+    } catch (err) {
+      btn.disabled = false;
+      btn.innerHTML = 'Retry';
+      showSession(null, 'Dispatch failed: ' + err.message);
+    }
+  }
+
+  function restoreDispatched(id) {
+    document.getElementById('timeline').classList.add('show');
+    ['detect', 'dispatch', 'investigate'].forEach((k) => setStep(k, 'done'));
+    setStep('pr', 'active');
+    document.querySelectorAll('.conn').forEach((c) => (c.className = 'conn done'));
+    const btn = document.getElementById('devinBtn');
+    btn.disabled = true;
+    btn.innerHTML = '&#129302; Devin dispatched';
+    showSession(dispatched[id], null);
+  }
+
+  function showSession(session, errorMsg) {
+    const el = document.getElementById('sessionLink');
+    if (!el) return;
+    el.classList.add('show');
+    if (session) {
+      el.innerHTML = '&#129302; <b>Devin session active.</b> <a href="' + esc(session.url) + '" target="_blank">' + esc(session.url) + '</a>';
+    } else {
+      el.innerHTML = '&#9888;&#65039; ' + esc(errorMsg);
+    }
+  }
+
+  load();
+</script>
+</body>
+</html>

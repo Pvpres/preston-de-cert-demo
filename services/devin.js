@@ -54,4 +54,33 @@ async function createDevinSession(details) {
   return { sessionId, url };
 }
 
-module.exports = { createDevinSession, buildPrompt };
+/**
+ * Create a Devin session from an explicit prompt/title. Used by the
+ * error-monitoring dashboard to dispatch Devin at a specific incident.
+ * Returns { sessionId, url } on success, or null if no API key is set.
+ */
+async function createSession({ prompt, title }) {
+  const apiKey = process.env.DEVIN_API_KEY;
+  if (!apiKey) {
+    console.warn('[devin] DEVIN_API_KEY not set — skipping session creation');
+    return null;
+  }
+
+  const response = await axios.post(
+    `${DEVIN_API_BASE}/sessions`,
+    { prompt, title },
+    {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      timeout: 15000,
+    }
+  );
+
+  const { session_id: sessionId, url } = response.data;
+  console.log(`[devin] Session created: ${sessionId} — ${url}`);
+  return { sessionId, url };
+}
+
+module.exports = { createDevinSession, createSession, buildPrompt };

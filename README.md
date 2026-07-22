@@ -32,6 +32,19 @@ npm start              # http://localhost:3000
 
 Demo tips: each click creates a new Devin session; the triggered session opens a PR fixing the bug — close/revert it between runs to keep the demo bug in place.
 
+### Sentinel monitoring dashboard (`/dashboard.html`)
+
+A Sentry/Snyk-style error-monitoring UI over mock incident data. Open
+http://localhost:3000/dashboard.html:
+
+- Issue stream with severity, event counts, affected users, and the live
+  `TypeError` and Java `BUILD FAILURE` incidents.
+- Issue detail with stack trace and breadcrumbs.
+- **Devin Auto-Remediation** panel: click **Trigger Devin** and a live timeline
+  animates *Detected → Devin dispatched → Investigating → Fix PR opened*, calling
+  `POST /api/incidents/:id/remediate` which creates a real Devin session
+  (linked once active). "Auto-remediation is ON" frames it as firing automatically.
+
 ## 2. Java migration demo (`careotter-records/`)
 
 A small patient-records REST service that is **intentionally outdated**:
