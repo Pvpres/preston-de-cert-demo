@@ -6,59 +6,73 @@
 <title>Careotter Sentinel — Error Monitoring</title>
 <style>
   :root {
-    --bg: #16111f;
-    --bg-2: #1e1730;
-    --panel: #241b39;
-    --panel-2: #2c2145;
-    --border: #372a52;
-    --text: #e9e4f5;
-    --muted: #9d92b8;
-    --purple: #7b4fd4;
-    --purple-bright: #a879e0;
-    --red: #ff5c6c;
-    --red-bg: #3a1622;
-    --amber: #ffb454;
-    --green: #4fd48a;
-    --blue: #4f9bd4;
+    --bg: #f6f7fb;
+    --bg-2: #ffffff;
+    --panel: #ffffff;
+    --panel-2: #f2f0fa;
+    --border: #e4e2ee;
+    --text: #1f1a2e;
+    --muted: #6b6580;
+    --purple: #6c3fd1;
+    --purple-bright: #8b5cf0;
+    --red: #d83a52;
+    --red-bg: #fdecef;
+    --amber: #b7791f;
+    --amber-bg: #fdf3e2;
+    --green: #1f9d63;
+    --blue: #3a7bd5;
+    --shadow: 0 1px 3px rgba(28,20,50,0.07);
   }
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: "Inter", "Segoe UI", system-ui, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
-  a { color: var(--purple-bright); }
+  a { color: var(--purple); }
 
   .app { display: grid; grid-template-columns: 220px 1fr; min-height: 100vh; }
 
   /* Sidebar */
   .rail { background: var(--bg-2); border-right: 1px solid var(--border); padding: 1rem 0.75rem; }
   .brand { display: flex; align-items: center; gap: 0.5rem; font-weight: 800; font-size: 1.05rem; padding: 0.4rem 0.5rem 1.1rem; }
-  .brand .dot { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); box-shadow: 0 0 12px rgba(168,121,224,0.6); }
+  .brand .dot { width: 20px; height: 20px; border-radius: 6px; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); box-shadow: 0 0 10px rgba(139,92,240,0.45); }
   .navsec { color: var(--muted); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; margin: 1rem 0.5rem 0.35rem; }
   .rail a { display: flex; align-items: center; gap: 0.55rem; color: var(--muted); text-decoration: none; padding: 0.45rem 0.5rem; border-radius: 6px; font-weight: 600; }
-  .rail a.active { background: var(--panel-2); color: var(--text); }
+  .rail a.active { background: var(--panel-2); color: var(--purple); }
   .rail a:hover { color: var(--text); }
 
   /* Main */
   .main { display: flex; flex-direction: column; min-width: 0; }
-  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.4rem; border-bottom: 1px solid var(--border); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1.4rem; border-bottom: 1px solid var(--border); background: var(--bg-2); }
   .topbar h1 { font-size: 1.05rem; font-weight: 700; }
+  .topbar .rhs { display: flex; align-items: center; gap: 0.8rem; }
+  .auto-flag { display: flex; align-items: center; gap: 0.45rem; font-size: 0.76rem; color: var(--purple); font-weight: 700; background: var(--panel-2); border: 1px solid #e0d8f7; border-radius: 999px; padding: 0.3rem 0.7rem; }
+  .toggle { position: relative; width: 28px; height: 16px; border-radius: 999px; background: var(--purple); }
+  .toggle::after { content: ''; position: absolute; top: 2px; right: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
   .env-pill { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); border-radius: 999px; padding: 0.2rem 0.6rem; }
 
-  .content { display: grid; grid-template-columns: 1.1fr 1.4fr; gap: 0; flex: 1; min-height: 0; }
+  .content { display: grid; grid-template-columns: 1.15fr 1.4fr; gap: 0; flex: 1; min-height: 0; }
 
   /* Issue stream */
-  .stream { border-right: 1px solid var(--border); overflow-y: auto; }
-  .stream-head { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; color: var(--muted); font-size: 0.78rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg); }
+  .stream { border-right: 1px solid var(--border); overflow-y: auto; background: var(--bg-2); }
+  .stream-head { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 1rem; color: var(--muted); font-size: 0.78rem; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--bg-2); }
   .issue { display: block; width: 100%; text-align: left; background: none; border: none; border-bottom: 1px solid var(--border); padding: 0.85rem 1rem; cursor: pointer; color: var(--text); }
-  .issue:hover { background: var(--bg-2); }
-  .issue.active { background: var(--panel); box-shadow: inset 3px 0 0 var(--purple-bright); }
+  .issue:hover { background: var(--bg); }
+  .issue.active { background: var(--panel-2); box-shadow: inset 3px 0 0 var(--purple); }
   .issue-top { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem; }
   .lvl { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.12rem 0.4rem; border-radius: 4px; }
   .lvl.error { background: var(--red-bg); color: var(--red); }
-  .lvl.warning { background: #3a2f14; color: var(--amber); }
-  .issue-title { font-weight: 700; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lvl.warning { background: var(--amber-bg); color: var(--amber); }
+  .issue-title { font-weight: 700; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
   .issue-sub { color: var(--muted); font-size: 0.78rem; font-family: ui-monospace, "SF Mono", Menlo, monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-  .issue-meta { display: flex; gap: 1.1rem; margin-top: 0.4rem; color: var(--muted); font-size: 0.74rem; }
+  .issue-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 0.45rem; }
+  .issue-meta { display: flex; gap: 1.1rem; color: var(--muted); font-size: 0.74rem; }
   .issue-meta b { color: var(--text); }
   .resolved .issue-title { color: var(--muted); text-decoration: line-through; }
+
+  /* Assignee chip */
+  .assignee { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 700; border-radius: 999px; padding: 0.15rem 0.5rem 0.15rem 0.15rem; }
+  .assignee.devin { background: var(--panel-2); color: var(--purple); border: 1px solid #e0d8f7; }
+  .assignee.pending { background: var(--bg); color: var(--muted); border: 1px dashed var(--border); padding-left: 0.5rem; }
+  .avatar { width: 17px; height: 17px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); display: inline-flex; align-items: center; justify-content: center; font-size: 0.62rem; }
+  .mini-spin { width: 11px; height: 11px; border: 2px solid rgba(108,63,209,0.25); border-top-color: var(--purple); border-radius: 50%; display: inline-block; animation: spin 0.7s linear infinite; }
 
   /* Detail */
   .detail { overflow-y: auto; padding: 1.2rem 1.4rem 2.5rem; }
@@ -68,52 +82,46 @@
   .badge { font-size: 0.72rem; color: var(--muted); border: 1px solid var(--border); background: var(--bg-2); border-radius: 6px; padding: 0.28rem 0.55rem; }
   .badge b { color: var(--text); }
 
-  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.1rem; overflow: hidden; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1.1rem; overflow: hidden; box-shadow: var(--shadow); }
   .card-h { padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
-  pre { padding: 0.9rem; font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; line-height: 1.55; color: #ffd7db; white-space: pre-wrap; overflow-x: auto; }
+  pre { padding: 0.9rem; font-family: ui-monospace, Menlo, monospace; font-size: 0.8rem; line-height: 1.55; color: #b3243b; background: #fbf4f5; white-space: pre-wrap; overflow-x: auto; }
   .crumbs { padding: 0.4rem 0; }
   .crumb { display: grid; grid-template-columns: 62px 90px 1fr; gap: 0.6rem; padding: 0.4rem 0.9rem; font-size: 0.8rem; border-top: 1px solid var(--border); }
   .crumb:first-child { border-top: none; }
   .crumb .t { color: var(--muted); font-family: ui-monospace, Menlo, monospace; }
-  .crumb .c { color: var(--purple-bright); font-weight: 600; }
+  .crumb .c { color: var(--purple); font-weight: 600; }
 
   /* Devin auto-remediation */
-  .devin-card { border: 1px solid var(--purple); background: linear-gradient(180deg, rgba(123,79,212,0.14), rgba(36,27,57,0.6)); }
+  .devin-card { border: 1px solid #d9ccf6; background: linear-gradient(180deg, #f5f1fd, #ffffff); }
   .devin-head { display: flex; align-items: center; justify-content: space-between; padding: 0.9rem 1rem; }
   .devin-head .lhs { display: flex; align-items: center; gap: 0.6rem; }
-  .devin-logo { width: 26px; height: 26px; border-radius: 7px; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); box-shadow: 0 0 14px rgba(168,121,224,0.7); }
+  .devin-logo { width: 28px; height: 28px; border-radius: 7px; background: linear-gradient(135deg, var(--purple), var(--purple-bright)); box-shadow: 0 0 12px rgba(139,92,240,0.5); display: flex; align-items: center; justify-content: center; font-size: 0.95rem; }
   .devin-head h3 { font-size: 0.95rem; }
   .devin-head .sub { color: var(--muted); font-size: 0.76rem; }
-
-  .btn { border: none; border-radius: 8px; padding: 0.6rem 1rem; font-weight: 700; font-size: 0.85rem; cursor: pointer; font-family: inherit; }
-  .btn-devin { background: linear-gradient(135deg, var(--purple), var(--purple-bright)); color: #fff; box-shadow: 0 4px 14px rgba(123,79,212,0.45); }
-  .btn-devin:hover { filter: brightness(1.08); }
-  .btn-devin:disabled { opacity: 0.6; cursor: default; box-shadow: none; }
+  .status-chip { font-size: 0.72rem; font-weight: 800; border-radius: 999px; padding: 0.3rem 0.7rem; }
+  .status-chip.assigned { background: var(--panel-2); color: var(--purple); border: 1px solid #e0d8f7; }
+  .status-chip.working { background: var(--amber-bg); color: var(--amber); border: 1px solid #f0e0c4; }
 
   .auto-note { display: flex; align-items: center; gap: 0.45rem; color: var(--muted); font-size: 0.75rem; padding: 0 1rem 0.6rem; }
-  .toggle { position: relative; width: 30px; height: 17px; border-radius: 999px; background: var(--purple); }
-  .toggle::after { content: ''; position: absolute; top: 2px; right: 2px; width: 13px; height: 13px; border-radius: 50%; background: #fff; }
 
   /* Timeline */
-  .timeline { display: none; padding: 0.4rem 1rem 1.1rem; }
-  .timeline.show { display: block; }
-  .step { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.5rem 0; }
+  .timeline { padding: 0.4rem 1rem 1.1rem; }
+  .step { display: flex; gap: 0.7rem; align-items: flex-start; padding: 0.45rem 0; }
   .step .icon { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--border); flex: none; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: var(--muted); background: var(--bg-2); margin-top: 1px; }
   .step .body .s-title { font-weight: 700; font-size: 0.85rem; color: var(--muted); }
   .step .body .s-sub { color: var(--muted); font-size: 0.76rem; margin-top: 0.1rem; }
-  .step.done .icon { border-color: var(--green); color: var(--green); }
+  .step.done .icon { border-color: var(--green); color: #fff; background: var(--green); }
   .step.done .body .s-title { color: var(--text); }
-  .step.active .icon { border-color: var(--purple-bright); color: var(--purple-bright); animation: pulse 1s infinite; }
-  .step.active .body .s-title { color: var(--purple-bright); }
-  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(168,121,224,0.5); } 50% { box-shadow: 0 0 0 6px rgba(168,121,224,0); } }
-  .conn { width: 2px; background: var(--border); margin-left: 10px; height: 10px; }
+  .step.active .icon { border-color: var(--purple); color: var(--purple); animation: pulse 1s infinite; }
+  .step.active .body .s-title { color: var(--purple); }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(139,92,240,0.45); } 50% { box-shadow: 0 0 0 6px rgba(139,92,240,0); } }
+  .conn { width: 2px; background: var(--border); margin-left: 10px; height: 8px; }
   .conn.done { background: var(--green); }
 
-  .session-link { margin-top: 0.7rem; padding: 0.7rem 0.85rem; border: 1px solid var(--purple); border-radius: 8px; background: rgba(123,79,212,0.12); font-size: 0.82rem; display: none; }
-  .session-link.show { display: block; }
+  .session-link { margin-top: 0.7rem; padding: 0.7rem 0.85rem; border: 1px solid #d9ccf6; border-radius: 8px; background: #f5f1fd; font-size: 0.82rem; }
   .session-link a { font-weight: 700; word-break: break-all; }
 
-  .spinner { width: 13px; height: 13px; border: 2px solid rgba(255,255,255,0.35); border-top-color: #fff; border-radius: 50%; display: inline-block; animation: spin 0.7s linear infinite; vertical-align: -2px; }
+  .spinner { width: 13px; height: 13px; border: 2px solid rgba(108,63,209,0.3); border-top-color: var(--purple); border-radius: 50%; display: inline-block; animation: spin 0.7s linear infinite; vertical-align: -2px; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .empty { color: var(--muted); padding: 3rem 1.4rem; text-align: center; }
@@ -138,7 +146,10 @@
   <main class="main">
     <div class="topbar">
       <h1>Issues</h1>
-      <span class="env-pill">careotter &middot; production</span>
+      <div class="rhs">
+        <span class="auto-flag"><span class="toggle"></span> Auto-remediation ON</span>
+        <span class="env-pill">careotter &middot; production</span>
+      </div>
     </div>
     <div class="content">
       <section class="stream">
@@ -146,7 +157,7 @@
         <div id="issueList"></div>
       </section>
       <section class="detail" id="detail">
-        <div class="empty">Select an issue to view details.</div>
+        <div class="empty">Loading issues…</div>
       </section>
     </div>
   </main>
@@ -155,7 +166,7 @@
 <script>
   let incidents = [];
   let activeId = null;
-  const dispatched = {}; // incidentId -> { url, sessionId }
+  const state = {}; // id -> { phase: 'pending'|'assigning'|'assigned'|'error', session, error, animated }
 
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const rel = (iso) => {
@@ -165,13 +176,63 @@
     if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
     return Math.floor(diff / 86400) + 'd ago';
   };
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
   async function load() {
     const res = await fetch('/api/incidents');
     incidents = (await res.json()).incidents;
+    incidents.forEach((i) => {
+      if (i.assignee) state[i.id] = { phase: 'assigned', session: { url: i.assignee.url, sessionId: i.assignee.sessionId }, animated: true };
+      else if (i.remediable && i.status !== 'resolved') state[i.id] = { phase: 'pending' };
+      else state[i.id] = { phase: 'na' };
+    });
     renderList();
     const firstOpen = incidents.find((i) => i.status !== 'resolved');
     if (firstOpen) select(firstOpen.id);
+    autoRemediateAll();
+  }
+
+  // Automatically dispatch Devin for every unresolved, remediable incident — no button.
+  async function autoRemediateAll() {
+    for (const i of incidents) {
+      if (i.remediable && i.status !== 'resolved' && state[i.id].phase === 'pending') {
+        await autoAssign(i.id);
+        await sleep(700);
+      }
+    }
+  }
+
+  async function autoAssign(id) {
+    const st = state[id];
+    st.phase = 'assigning';
+    renderList();
+    if (id === activeId) renderDetail();
+    try {
+      const res = await fetch('/api/incidents/' + id + '/assign', { method: 'POST' });
+      const data = await res.json();
+      if (data.dispatched && data.devinSession) {
+        st.phase = 'assigned';
+        st.session = data.devinSession;
+        st.animated = Boolean(data.alreadyAssigned);
+      } else {
+        st.phase = 'error';
+        st.error = 'DEVIN_API_KEY not configured on the server — set it in .env and reload.';
+      }
+    } catch (err) {
+      st.phase = 'error';
+      st.error = 'Dispatch failed: ' + err.message;
+    }
+    renderList();
+    if (id === activeId) renderDetail();
+  }
+
+  function assigneeChip(i) {
+    const st = state[i.id];
+    if (!i.remediable || i.status === 'resolved') return '';
+    if (st.phase === 'assigned') return `<span class="assignee devin"><span class="avatar">&#129302;</span> Assigned to Devin</span>`;
+    if (st.phase === 'assigning') return `<span class="assignee pending"><span class="mini-spin"></span> Assigning…</span>`;
+    if (st.phase === 'error') return `<span class="assignee pending">&#9888;&#65039; Awaiting Devin</span>`;
+    return `<span class="assignee pending">Unassigned</span>`;
   }
 
   function renderList() {
@@ -184,11 +245,13 @@
           <span class="issue-title">${esc(i.title)}</span>
         </div>
         <div class="issue-sub">${esc(i.culprit)}</div>
-        <div class="issue-meta">
-          <span><b>${i.events24h.toLocaleString()}</b> events</span>
-          <span><b>${i.users}</b> users</span>
-          <span>${esc(i.service)}</span>
-          <span>${rel(i.lastSeen)}</span>
+        <div class="issue-foot">
+          <div class="issue-meta">
+            <span><b>${i.events24h.toLocaleString()}</b> events</span>
+            <span><b>${i.users}</b> users</span>
+            <span>${esc(i.service)}</span>
+          </div>
+          ${assigneeChip(i)}
         </div>
       </button>`).join('');
   }
@@ -196,9 +259,13 @@
   function select(id) {
     activeId = id;
     renderList();
-    const i = incidents.find((x) => x.id === id);
+    renderDetail();
+  }
+
+  function renderDetail() {
+    const i = incidents.find((x) => x.id === activeId);
     if (!i) return;
-    const d = dispatched[id];
+    const st = state[i.id];
     document.getElementById('detail').innerHTML = `
       <h2>${esc(i.title)}</h2>
       <div class="culprit">${esc(i.culprit)}</div>
@@ -212,32 +279,7 @@
         <span class="badge">Users <b>${i.users}</b></span>
         <span class="badge">Last seen <b>${rel(i.lastSeen)}</b></span>
       </div>
-
-      ${i.remediable ? `
-      <div class="card devin-card">
-        <div class="devin-head">
-          <div class="lhs">
-            <span class="devin-logo"></span>
-            <div>
-              <h3>Devin Auto-Remediation</h3>
-              <div class="sub">Dispatch an autonomous engineer to investigate & fix this issue</div>
-            </div>
-          </div>
-          <button class="btn btn-devin" id="devinBtn" onclick="remediate('${i.id}')">Trigger Devin</button>
-        </div>
-        <div class="auto-note"><span class="toggle"></span> Auto-remediation is ON — Devin dispatches automatically when this alert fires.</div>
-        <div class="timeline" id="timeline">
-          ${step('detect', 'Error detected', 'Sentinel captured ' + i.events24h.toLocaleString() + ' events')}
-          ${conn()}
-          ${step('dispatch', 'Devin dispatched', 'Creating session via Devin API')}
-          ${conn()}
-          ${step('investigate', 'Investigating', 'Devin is analyzing the stack trace & repo')}
-          ${conn()}
-          ${step('pr', 'Fix PR opened', 'Devin submits a pull request for review')}
-          <div class="session-link" id="sessionLink"></div>
-        </div>
-      </div>` : ''}
-
+      ${i.remediable && i.status !== 'resolved' ? devinCard(i, st) : ''}
       <div class="card">
         <div class="card-h">Stack trace</div>
         <pre>${esc(i.stacktrace)}</pre>
@@ -250,78 +292,88 @@
         </div>
       </div>` : ''}
     `;
-    if (d) restoreDispatched(id);
+    maybeAnimate(i.id);
+  }
+
+  function devinCard(i, st) {
+    let chip = '<span class="status-chip working">Awaiting dispatch</span>';
+    if (st.phase === 'assigning') chip = '<span class="status-chip working"><span class="spinner"></span> Dispatching…</span>';
+    if (st.phase === 'assigned') chip = '<span class="status-chip assigned">&#129302; Assigned to Devin</span>';
+    if (st.phase === 'error') chip = '<span class="status-chip working">&#9888;&#65039; Not configured</span>';
+
+    return `
+      <div class="card devin-card">
+        <div class="devin-head">
+          <div class="lhs">
+            <span class="devin-logo">&#129302;</span>
+            <div>
+              <h3>Devin Auto-Remediation</h3>
+              <div class="sub">Devin was dispatched automatically when this alert fired</div>
+            </div>
+          </div>
+          ${chip}
+        </div>
+        <div class="auto-note"><span class="toggle"></span> Auto-remediation is ON — no manual trigger needed.</div>
+        <div class="timeline" id="timeline">
+          ${step('detect', 'Error detected', 'Sentinel captured ' + i.events24h.toLocaleString() + ' events')}
+          ${conn()}
+          ${step('dispatch', 'Assigned to Devin', 'Session created via Devin API')}
+          ${conn()}
+          ${step('investigate', 'Investigating', 'Devin is analyzing the stack trace & repo')}
+          ${conn()}
+          ${step('pr', 'Fix PR opened', 'Devin submits a pull request for review')}
+          <div class="session-link" id="sessionLink" style="display:none"></div>
+        </div>
+      </div>`;
   }
 
   function step(key, title, sub) {
     return `<div class="step" id="st-${key}"><div class="icon">&#9679;</div><div class="body"><div class="s-title">${title}</div><div class="s-sub">${sub}</div></div></div>`;
   }
-  function conn() { return '<div class="conn" id="conn"></div>'; }
-
-  function setStep(key, state) {
-    const el = document.getElementById('st-' + key);
-    if (el) el.className = 'step ' + state;
-  }
-
-  async function remediate(id) {
-    const btn = document.getElementById('devinBtn');
-    const tl = document.getElementById('timeline');
-    tl.classList.add('show');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Dispatching…';
-
-    setStep('detect', 'done');
-    setStep('dispatch', 'active');
-
-    try {
-      const res = await fetch('/api/incidents/' + id + '/remediate', { method: 'POST' });
-      const data = await res.json();
-
-      if (!data.dispatched || !data.devinSession) {
-        setStep('dispatch', 'active');
-        document.getElementById('devinBtn').innerHTML = 'Retry';
-        document.getElementById('devinBtn').disabled = false;
-        showSession(null, 'DEVIN_API_KEY not configured on the server — session was not created. Set it in .env and retry.');
-        return;
-      }
-
-      dispatched[id] = data.devinSession;
-      setStep('dispatch', 'done');
-      document.querySelectorAll('.conn')[0] && (document.querySelectorAll('.conn')[0].className = 'conn done');
-      setStep('investigate', 'active');
-      btn.innerHTML = '&#129302; Devin working…';
-
-      setTimeout(() => {
-        setStep('investigate', 'done');
-        setStep('pr', 'active');
-        showSession(data.devinSession, null);
-      }, 2600);
-    } catch (err) {
-      btn.disabled = false;
-      btn.innerHTML = 'Retry';
-      showSession(null, 'Dispatch failed: ' + err.message);
-    }
-  }
-
-  function restoreDispatched(id) {
-    document.getElementById('timeline').classList.add('show');
-    ['detect', 'dispatch', 'investigate'].forEach((k) => setStep(k, 'done'));
-    setStep('pr', 'active');
-    document.querySelectorAll('.conn').forEach((c) => (c.className = 'conn done'));
-    const btn = document.getElementById('devinBtn');
-    btn.disabled = true;
-    btn.innerHTML = '&#129302; Devin dispatched';
-    showSession(dispatched[id], null);
-  }
+  function conn() { return '<div class="conn"></div>'; }
+  function setStep(key, s) { const el = document.getElementById('st-' + key); if (el) el.className = 'step ' + s; }
+  function setConns(done) { document.querySelectorAll('.conn').forEach((c) => (c.className = done ? 'conn done' : 'conn')); }
 
   function showSession(session, errorMsg) {
     const el = document.getElementById('sessionLink');
     if (!el) return;
-    el.classList.add('show');
-    if (session) {
-      el.innerHTML = '&#129302; <b>Devin session active.</b> <a href="' + esc(session.url) + '" target="_blank">' + esc(session.url) + '</a>';
-    } else {
-      el.innerHTML = '&#9888;&#65039; ' + esc(errorMsg);
+    el.style.display = 'block';
+    if (session) el.innerHTML = '&#129302; <b>Devin session active.</b> <a href="' + esc(session.url) + '" target="_blank">' + esc(session.url) + '</a>';
+    else el.innerHTML = '&#9888;&#65039; ' + esc(errorMsg);
+  }
+
+  async function maybeAnimate(id) {
+    const st = state[id];
+    if (!document.getElementById('timeline')) return;
+
+    if (st.phase === 'pending') { setStep('detect', 'done'); return; }
+
+    if (st.phase === 'assigning') {
+      setStep('detect', 'done'); setStep('dispatch', 'active');
+      return;
+    }
+
+    if (st.phase === 'error') {
+      setStep('detect', 'done'); setStep('dispatch', 'active');
+      showSession(null, st.error);
+      return;
+    }
+
+    if (st.phase === 'assigned') {
+      if (st.animated) {
+        // already-known assignment (e.g. page refresh) — show completed instantly
+        ['detect', 'dispatch', 'investigate'].forEach((k) => setStep(k, 'done'));
+        setStep('pr', 'active'); setConns(true); showSession(st.session, null);
+        return;
+      }
+      // fresh assignment — animate the hand-off
+      st.animated = true;
+      setStep('detect', 'done'); setStep('dispatch', 'active');
+      await sleep(600); if (activeId !== id) return;
+      setStep('dispatch', 'done'); setStep('investigate', 'active'); setConns(true);
+      showSession(st.session, null);
+      await sleep(2400); if (activeId !== id) return;
+      setStep('investigate', 'done'); setStep('pr', 'active');
     }
   }
 
