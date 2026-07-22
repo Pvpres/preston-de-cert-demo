@@ -16,7 +16,7 @@ const VISIT_TYPES = {
 function resolveVisitType(typeId) {
   const type = VISIT_TYPES[typeId];
   if (!type) return null;
-  return { params: [type.rate, type.copay], duration: type.duration };
+  return { schedule: { rate: type.rate, copay: type.copay }, duration: type.duration };
 }
 
 /**
