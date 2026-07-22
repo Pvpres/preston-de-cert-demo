@@ -1,18 +1,17 @@
 package com.careotter.records.web;
 
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import jakarta.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.careotter.records.model.MedicalRecord;
 import com.careotter.records.model.Patient;
 import com.careotter.records.repository.PatientStore;
 import com.careotter.records.util.DateUtil;
@@ -21,7 +20,7 @@ import com.careotter.records.util.DateUtil;
 @RequestMapping("/api")
 public class PatientController {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PatientController.class);
+    private static final Logger LOG = Logger.getLogger(PatientController.class);
 
     private final PatientStore store;
 
@@ -29,22 +28,26 @@ public class PatientController {
         this.store = store;
     }
 
-    @GetMapping("/patients")
-    public List<Patient> getPatients(HttpServletRequest request) {
-        LOG.info("Listing patients for {} audit={}", request.getRemoteAddr(),
-                DateUtil.encodeAuditToken(request.getRemoteAddr()));
-        List<Patient> patients = store.findAllPatients();
-        patients.sort(Comparator.comparing(Patient::getName));
+    @RequestMapping(value = "/patients", method = RequestMethod.GET)
+    public List getPatients(HttpServletRequest request) {
+        LOG.info("Listing patients for " + request.getRemoteAddr()
+                + " audit=" + DateUtil.encodeAuditToken(request.getRemoteAddr()));
+        List patients = store.findAllPatients();
+        Collections.sort(patients, new Comparator() {
+            public int compare(Object a, Object b) {
+                return ((Patient) a).getName().compareTo(((Patient) b).getName());
+            }
+        });
         return patients;
     }
 
-    @GetMapping("/patients/{id}")
+    @RequestMapping(value = "/patients/{id}", method = RequestMethod.GET)
     public Patient getPatient(@PathVariable("id") String id) {
         return store.findById(id);
     }
 
-    @GetMapping("/patients/{id}/records")
-    public List<MedicalRecord> getRecords(@PathVariable("id") String id) {
+    @RequestMapping(value = "/patients/{id}/records", method = RequestMethod.GET)
+    public List getRecords(@PathVariable("id") String id) {
         return store.findRecordsForPatient(id);
     }
 }
