@@ -16,7 +16,7 @@ const TRANSFER_TYPES = {
 function resolveTransferType(typeId) {
   const type = TRANSFER_TYPES[typeId];
   if (!type) return null;
-  return { params: [type.rate, type.flat], settlement: type.settlement };
+  return { schedule: { rate: type.rate, flat: type.flat }, settlement: type.settlement };
 }
 
 /**
