@@ -6,9 +6,9 @@
 <title>Acme Bank — Transfers</title>
 <style>
   :root {
-    --green: #038203;
-    --green-dark: #026302;
-    --green-bright: #8cc63f;
+    --purple: #5f259f;
+    --purple-dark: #46187a;
+    --purple-bright: #a879e0;
     --bg: #f3f3f3;
     --white: #fff;
     --gray-200: #e0e0e0;
@@ -21,13 +21,13 @@
 
   .topbar { background: var(--white); border-bottom: 1px solid var(--gray-200); }
   .topbar-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; gap: 2rem; padding: 0.7rem 1rem; }
-  .logo { background: var(--green); color: #fff; font-weight: 800; font-size: 1.25rem; padding: 0.35rem 0.7rem; border-radius: 3px; letter-spacing: 0.5px; }
+  .logo { background: var(--purple); color: #fff; font-weight: 800; font-size: 1.25rem; padding: 0.35rem 0.7rem; border-radius: 3px; letter-spacing: 0.5px; }
   .topnav { display: flex; gap: 1.5rem; font-weight: 600; color: var(--text); flex: 1; }
   .topnav a { color: inherit; text-decoration: none; }
-  .topnav a.active { color: var(--green); }
+  .topnav a.active { color: var(--purple); }
   .top-actions { display: flex; gap: 1.25rem; align-items: center; color: var(--gray-600); font-weight: 600; }
 
-  .hero { background: var(--green); color: #fff; padding: 1.4rem 0 1.6rem; }
+  .hero { background: var(--purple); color: #fff; padding: 1.4rem 0 1.6rem; }
   .hero-inner { max-width: 1100px; margin: 0 auto; padding: 0 1rem; }
   .hero h1 { font-size: 1.6rem; font-weight: 500; margin-bottom: 0.9rem; }
   .quick-actions { display: flex; gap: 0.6rem; }
@@ -38,7 +38,7 @@
 
   .sidebar { font-size: 0.88rem; }
   .sidebar .side-title { font-weight: 700; margin-bottom: 0.8rem; }
-  .sidebar a { display: block; color: var(--green); text-decoration: none; padding: 0.42rem 0.5rem; border-radius: 4px; }
+  .sidebar a { display: block; color: var(--purple); text-decoration: none; padding: 0.42rem 0.5rem; border-radius: 4px; }
   .sidebar a.active { background: var(--white); box-shadow: 0 1px 3px rgba(0,0,0,0.12); font-weight: 700; }
 
   .panel { background: var(--white); border: 1px solid var(--gray-200); border-radius: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -46,22 +46,22 @@
   .panel-head h2 { font-size: 1.25rem; font-weight: 600; }
   .section-row { display: flex; justify-content: space-between; padding: 0.8rem 1.25rem; background: #fafafa; font-weight: 700; border-top: 1px solid var(--gray-200); }
   .acct-row { display: flex; justify-content: space-between; padding: 0.75rem 1.25rem 0.75rem 1.6rem; border-top: 1px solid #eee; }
-  .acct-row .name { color: var(--green); font-weight: 700; }
+  .acct-row .name { color: var(--purple); font-weight: 700; }
   .acct-row .num { color: var(--gray-600); font-weight: 400; margin-left: 0.5rem; font-size: 0.82rem; }
 
   .transfer-card { margin-top: 1.5rem; padding: 1.5rem 1.25rem; }
-  .transfer-card h2 { font-size: 1.15rem; font-weight: 700; color: var(--green-dark); margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--green-bright); display: inline-block; }
+  .transfer-card h2 { font-size: 1.15rem; font-weight: 700; color: var(--purple-dark); margin-bottom: 1.2rem; padding-bottom: 0.4rem; border-bottom: 2px solid var(--purple-bright); display: inline-block; }
   .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
   .form-group { display: flex; flex-direction: column; gap: 0.3rem; }
   .form-group label { font-size: 0.8rem; font-weight: 700; color: var(--gray-600); }
   .form-group select, .form-group input { padding: 0.55rem 0.6rem; border: 1px solid #bdbdbd; border-radius: 4px; font-size: 0.9rem; font-family: inherit; }
-  .btn-transfer { width: 100%; padding: 0.85rem; background: var(--green); color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
-  .btn-transfer:hover { background: var(--green-dark); }
+  .btn-transfer { width: 100%; padding: 0.85rem; background: var(--purple); color: #fff; border: none; border-radius: 4px; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
+  .btn-transfer:hover { background: var(--purple-dark); }
   .btn-transfer:disabled { opacity: 0.5; cursor: not-allowed; }
 
   .result { margin-top: 1rem; padding: 0.9rem 1rem; border-radius: 4px; font-size: 0.88rem; display: none; }
   .result.error { display: block; background: #fdecea; border: 1px solid #f5c6c3; color: var(--red); }
-  .result.success { display: block; background: #edf7ed; border: 1px solid #c8e6c9; color: var(--green-dark); }
+  .result.success { display: block; background: #edf7ed; border: 1px solid #c8e6c9; color: var(--purple-dark); }
   .result a { color: inherit; font-weight: 700; }
 </style>
 </head>
@@ -107,7 +107,7 @@
       <div class="panel">
         <div class="panel-head">
           <h2>My Accounts</h2>
-          <div style="font-weight:600;color:var(--green)">Personal &nbsp;|&nbsp; Business</div>
+          <div style="font-weight:600;color:var(--purple)">Personal &nbsp;|&nbsp; Business</div>
         </div>
         <div class="section-row"><span>Banking</span><span>$6,222.09</span></div>
         <div class="acct-row"><span><span class="name">ACME UNLIMITED CHEQUING ACCOUNT</span><span class="num">1 116129</span></span><span>$3,389.05</span></div>
@@ -182,13 +182,7 @@
         result.textContent = 'Transfer complete. Confirmation ' + data.confirmationId;
       } else {
         result.className = 'result error';
-        let html = '<strong>Transfer failed.</strong> ' + (data.errorClass || 'Error') + ': ' + data.error;
-        if (data.devinSession && data.devinSession.url) {
-          html += '<br>Devin is investigating this incident: <a href="' + data.devinSession.url + '" target="_blank">View session</a>';
-        } else {
-          html += '<br>An automated Devin investigation has been requested.';
-        }
-        result.innerHTML = html;
+        result.innerHTML = '<strong>Transfer failed.</strong> ' + (data.errorClass || 'Error') + ': ' + data.error;
       }
     } catch (err) {
       result.className = 'result error';
