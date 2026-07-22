@@ -1,0 +1,18 @@
+$ mvn -B clean package        # on JDK 17 (required for the Azure migration)
+
+[INFO] Building Careotter Records Service 2.14.7
+[INFO] --- maven-compiler-plugin:3.1:compile (default-compile) @ careotter-records ---
+[ERROR] COMPILATION ERROR :
+[ERROR] .../com/careotter/records/util/DateUtil.java:[7,22] package javax.xml.bind does not exist
+[ERROR] .../com/careotter/records/util/DateUtil.java:[39,16] cannot find symbol
+  symbol:   variable DatatypeConverter
+  location: class com.careotter.records.util.DateUtil
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.1:compile
+        (default-compile) on project careotter-records: Compilation failure
+[ERROR] BUILD FAILURE
+
+Root cause: the service is written for Java 8. `javax.xml.bind` (JAXB) was
+removed from the JDK in Java 11, so the code no longer compiles on the
+Java 17 runtime required by the Azure migration. This is one of several
+legacy issues (Spring Boot 1.5, log4j 1.2 / CVE-2019-17571, thread-unsafe
+static SimpleDateFormat, raw Hashtable/Vector, JUnit 4).

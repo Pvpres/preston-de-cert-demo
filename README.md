@@ -43,7 +43,30 @@ A small patient-records REST service that is **intentionally outdated**:
 - `Hashtable`/`Vector`, raw types, anonymous inner-class comparators
 - JUnit 4, deprecated Apache HttpClient 4.3
 
-### Build & run (requires JDK 8)
+### The visible error (the demo hook)
+
+The Azure migration requires this service to build on **Java 17**. It doesn't —
+the outdated code fails to compile. Reproduce it with one command:
+
+```bash
+cd careotter-records
+./reproduce-error.sh          # builds on JDK 17, prints the failure
+```
+
+You'll see:
+
+```
+[ERROR] .../util/DateUtil.java:[7,22] package javax.xml.bind does not exist
+[ERROR] .../util/DateUtil.java:[39,16] cannot find symbol: variable DatatypeConverter
+[ERROR] BUILD FAILURE
+```
+
+`javax.xml.bind` (JAXB) was removed from the JDK in Java 11, so the Java 8 code
+won't compile on 17. The full captured output is in
+[`careotter-records/EXPECTED-ERROR.txt`](careotter-records/EXPECTED-ERROR.txt) —
+copy it straight into a Devin session to kick off the migration.
+
+### Build & run on the legacy JDK 8 (still works — that's the point)
 
 ```bash
 cd careotter-records

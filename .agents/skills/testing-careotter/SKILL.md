@@ -35,6 +35,11 @@ JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn test            # 4 tests pass o
 JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64 mvn spring-boot:run # http://localhost:8081/api/patients
 ```
 
+### The visible error (demo hook)
+`./reproduce-error.sh` builds on JDK 17 and fails deterministically:
+`package javax.xml.bind does not exist` → `BUILD FAILURE`. Captured output is in
+`careotter-records/EXPECTED-ERROR.txt` for pasting into a Devin session.
+
 - It will NOT build on Java 11+ (javax.xml.bind removed) — that is by design.
 - Migration demo prompt lives in the README under "Demo prompt for Devin".
 
