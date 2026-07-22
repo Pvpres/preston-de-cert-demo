@@ -1,19 +1,19 @@
 package com.careotter.records.model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Patient {
 
     private String id;
     private String name;
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
     private String mrn;
     private String primaryProvider;
 
     public Patient() {
     }
 
-    public Patient(String id, String name, Date dateOfBirth, String mrn, String primaryProvider) {
+    public Patient(String id, String name, LocalDate dateOfBirth, String mrn, String primaryProvider) {
         this.id = id;
         this.name = name;
         this.dateOfBirth = dateOfBirth;
@@ -37,11 +37,11 @@ public class Patient {
         this.name = name;
     }
 
-    public Date getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
