@@ -109,8 +109,26 @@ const INCIDENTS = [
   },
 ];
 
-function listIncidents() {
-  return INCIDENTS.map((i) => ({
+/**
+ * In-memory assignment store: incidentId -> { sessionId, url, assignedAt }.
+ * Keeps auto-remediation idempotent so refreshing the dashboard reuses the
+ * Devin session already dispatched for an incident instead of creating a new
+ * one. Resets when the server restarts.
+ */
+const assignments = {};
+
+function getAssignment(id) {
+  return assignments[id] || null;
+}
+
+function setAssignment(id, session) {
+  assignments[id] = { ...session, assignedAt: new Date().toISOString() };
+  return assignments[id];
+}
+
+function toClient(i) {
+  const a = getAssignment(i.id);
+  return {
     id: i.id,
     status: i.status,
     level: i.level,
@@ -127,11 +145,16 @@ function listIncidents() {
     stacktrace: i.stacktrace,
     breadcrumbs: i.breadcrumbs,
     remediable: i.remediable,
-  }));
+    assignee: a ? { type: 'devin', url: a.url, sessionId: a.sessionId, assignedAt: a.assignedAt } : null,
+  };
+}
+
+function listIncidents() {
+  return INCIDENTS.map(toClient);
 }
 
 function getIncident(id) {
   return INCIDENTS.find((i) => i.id === id) || null;
 }
 
-module.exports = { INCIDENTS, listIncidents, getIncident };
+module.exports = { INCIDENTS, listIncidents, getIncident, getAssignment, setAssignment };

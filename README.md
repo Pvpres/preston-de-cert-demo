@@ -40,10 +40,11 @@ http://localhost:3000/dashboard.html:
 - Issue stream with severity, event counts, affected users, and the live
   `TypeError` and Java `BUILD FAILURE` incidents.
 - Issue detail with stack trace and breadcrumbs.
-- **Devin Auto-Remediation** panel: click **Trigger Devin** and a live timeline
-  animates *Detected → Devin dispatched → Investigating → Fix PR opened*, calling
-  `POST /api/incidents/:id/remediate` which creates a real Devin session
-  (linked once active). "Auto-remediation is ON" frames it as firing automatically.
+- **Devin Auto-Remediation** (no button): on load, every unresolved remediable
+  incident is automatically assigned to Devin via `POST /api/incidents/:id/assign`
+  (idempotent — refreshes reuse the existing session). Rows show an **Assigned to
+  Devin** chip and the detail timeline auto-runs *Detected → Assigned to Devin →
+  Investigating → Fix PR opened*, linking the live session.
 
 ## 2. Java migration demo (`careotter-records/`)
 
