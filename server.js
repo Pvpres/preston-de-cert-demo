@@ -1,17 +1,17 @@
 require('dotenv').config();
 const path = require('path');
 const express = require('express');
-const transferRoutes = require('./routes/transfer');
+const appointmentRoutes = require('./routes/appointments');
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', transferRoutes);
+app.use('/', appointmentRoutes);
 
 app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Acme Bank demo running on http://localhost:${PORT}`);
+  console.log(`Careotter demo running on http://localhost:${PORT}`);
 });

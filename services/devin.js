@@ -9,17 +9,17 @@ function buildPrompt(details) {
   return [
     `Production alert: **${details.errorType}: ${details.errorMessage}**`,
     '',
-    `- Service: acme-bank-transfers`,
+    `- Service: careotter-scheduling`,
     `- Repo: ${process.env.TARGET_REPO || 'Pvpres/preston-de-cert-demo'}`,
-    `- Endpoint: POST /api/transfer`,
-    `- From account: ${details.fromAccount}`,
-    `- To account: ${details.toAccount}`,
-    `- Amount: $${details.amount}`,
+    `- Endpoint: POST /api/appointments`,
+    `- Patient: ${details.patientId}`,
+    `- Provider: ${details.providerId}`,
+    `- Visit type: ${details.visitType}`,
     `- Timestamp: ${details.timestamp}`,
     '',
-    'A customer clicked "Transfer Money" on the Acme Bank online banking page and the transfer failed with the error above.',
+    'A front-desk user clicked "Schedule Appointment" in the Careotter patient records portal and scheduling failed with the error above.',
     '',
-    'Investigate the root cause in the repo, implement a minimal fix, and open a pull request. The bug is in the transfer fee calculation path (`services/transfers.js`). Verify the fix by running the transfer locally before opening the PR.',
+    'Investigate the root cause in the repo, implement a minimal fix, and open a pull request. The bug is in the copay calculation path (`services/appointments.js`). Verify the fix by scheduling an appointment locally before opening the PR.',
   ].join('\n');
 }
 
@@ -38,7 +38,7 @@ async function createDevinSession(details) {
     `${DEVIN_API_BASE}/sessions`,
     {
       prompt: buildPrompt(details),
-      title: `Acme Bank: ${details.errorType} in transfer flow`,
+      title: `Careotter: ${details.errorType} in appointment scheduling`,
     },
     {
       headers: {
