@@ -1,11 +1,12 @@
 package com.careotter.records.repository;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Vector;
+import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.careotter.records.model.MedicalRecord;
@@ -19,10 +20,10 @@ import com.careotter.records.util.DateUtil;
 @Repository
 public class PatientStore {
 
-    private static final Logger LOG = Logger.getLogger(PatientStore.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PatientStore.class);
 
-    private final Hashtable patients = new Hashtable();
-    private final Vector records = new Vector();
+    private final Map<String, Patient> patients = new LinkedHashMap<>();
+    private final List<MedicalRecord> records = new ArrayList<>();
 
     public PatientStore() {
         seed();
@@ -45,7 +46,7 @@ public class PatientStore {
         records.add(new MedicalRecord("REC-5003", "PT-101440", DateUtil.parse("2026-07-01"),
                 "Dr. Alvarez", "J06.9", "Office visit, URI symptoms"));
 
-        LOG.info("Seeded " + patients.size() + " patients and " + records.size() + " records");
+        LOG.info("Seeded {} patients and {} records", patients.size(), records.size());
     }
 
     public void addPatient(Patient patient) {
@@ -53,22 +54,16 @@ public class PatientStore {
     }
 
     public Patient findById(String id) {
-        return (Patient) patients.get(id);
+        return patients.get(id);
     }
 
-    public List findAllPatients() {
-        Vector result = new Vector();
-        Enumeration e = patients.elements();
-        while (e.hasMoreElements()) {
-            result.add(e.nextElement());
-        }
-        return result;
+    public List<Patient> findAllPatients() {
+        return new ArrayList<>(patients.values());
     }
 
-    public List findRecordsForPatient(String patientId) {
-        Vector result = new Vector();
-        for (int i = 0; i < records.size(); i++) {
-            MedicalRecord record = (MedicalRecord) records.get(i);
+    public List<MedicalRecord> findRecordsForPatient(String patientId) {
+        List<MedicalRecord> result = new ArrayList<>();
+        for (MedicalRecord record : records) {
             if (record.getPatientId().equals(patientId)) {
                 result.add(record);
             }
