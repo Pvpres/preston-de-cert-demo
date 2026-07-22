@@ -1,36 +1,35 @@
 package com.careotter.records;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
 
-import com.careotter.records.model.MedicalRecord;
 import com.careotter.records.model.Patient;
 import com.careotter.records.repository.PatientStore;
 import com.careotter.records.util.DateUtil;
 
-class PatientStoreTest {
+public class PatientStoreTest {
 
     private PatientStore store;
 
-    @BeforeEach
-    void setUp() {
+    @Before
+    public void setUp() {
         store = new PatientStore();
     }
 
     @Test
-    void seedsDemoPatients() {
-        List<Patient> patients = store.findAllPatients();
+    public void seedsDemoPatients() {
+        List patients = store.findAllPatients();
         assertEquals(4, patients.size());
     }
 
     @Test
-    void findsPatientById() {
+    public void findsPatientById() {
         Patient patient = store.findById("PT-100234");
         assertNotNull(patient);
         assertEquals("Margaret Chen", patient.getName());
@@ -38,13 +37,13 @@ class PatientStoreTest {
     }
 
     @Test
-    void findsRecordsForPatient() {
-        List<MedicalRecord> records = store.findRecordsForPatient("PT-100234");
+    public void findsRecordsForPatient() {
+        List records = store.findRecordsForPatient("PT-100234");
         assertEquals(1, records.size());
     }
 
     @Test
-    void encodesAuditToken() {
+    public void encodesAuditToken() {
         String token = DateUtil.encodeAuditToken("front-desk-1");
         assertTrue(token.length() > 0);
     }

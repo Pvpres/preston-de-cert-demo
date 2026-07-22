@@ -1,12 +1,12 @@
 package com.careotter.records.model;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 public class MedicalRecord {
 
     private String recordId;
     private String patientId;
-    private LocalDate visitDate;
+    private Date visitDate;
     private String provider;
     private String diagnosisCode;
     private String notes;
@@ -14,7 +14,7 @@ public class MedicalRecord {
     public MedicalRecord() {
     }
 
-    public MedicalRecord(String recordId, String patientId, LocalDate visitDate,
+    public MedicalRecord(String recordId, String patientId, Date visitDate,
                          String provider, String diagnosisCode, String notes) {
         this.recordId = recordId;
         this.patientId = patientId;
@@ -40,11 +40,11 @@ public class MedicalRecord {
         this.patientId = patientId;
     }
 
-    public LocalDate getVisitDate() {
+    public Date getVisitDate() {
         return visitDate;
     }
 
-    public void setVisitDate(LocalDate visitDate) {
+    public void setVisitDate(Date visitDate) {
         this.visitDate = visitDate;
     }
 
